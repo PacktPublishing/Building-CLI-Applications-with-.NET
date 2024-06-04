@@ -8,11 +8,15 @@ namespace bookmarkr;
 
 /*
  * The different possible executions:
- * dotnet run => "You haven't passed any argument..."
- * dotnet run hello => "Unknown Command"
- * dotnet run link hello => "Unsufficient number of parameters..."
- * dotnet run link add Packt https://www.packtpub.com => "Bookmark successfully added!"
-  * dotnet run link add Packt https://www.packtpub.com => "Bookmark successfully added!"
+ * dotnet run => "Hello from the root command!"
+ * dotnet run hello => "Unrecognized command or argument 'hello'."
+ * dotnet run link add => "the 'name' for the link is not provided. The expected syntax is: bookmarkr link add <name> <url>"
+ * dotnet run -- --version => 2.0.0
+ * dotnet run -- --help | dotnet run -- -h | dotnet run -- -? => help menu for the CLI application.
+ * dotnet run -- link --help | dotnet run -- link -h | dotnet run -- link -? => help menu for the link command.
+  * dotnet run -- link add --help | dotnet run -- link add -h | dotnet run -- link add -? => help menu for the link command.
+ * dotnet run link add --name 'Packt Publishing' --url 'https://www.packtpub.com' => "Bookmark successfully added!"
+  * dotnet run link add -n 'Packt Publishing' -u 'https://www.packtpub.com' => "Bookmark successfully added!"
     * Yeah, I know you were expecting to be told that the bookmark already exists. The reason why it doesn't happen is that, for now, there is no backing store for the list of bookmarks.
     * Hence, with every execution, the list is reinitialized to an empty one.
 */
