@@ -19,7 +19,7 @@ public class BookmarkService
             return;
         }
 
-        if(_bookmarks.Any(b => b.Name.ToLower().Equals(name.ToLower())))
+        if(_bookmarks.Any(b => b.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
         {
             Helper.ShowWarningMessage([$"A link with the name '{name}' already exists. It will thus not be added", 
                                        $"To update the existing link, use the command: bookmarkr link update '{name}' '{url}'"]);
