@@ -2,14 +2,14 @@ namespace bookmarkr;
 
 public class BookmarkService
 {
-    private readonly List<Bookmark> _bookmarks = new();
+    //private readonly List<Bookmark> _bookmarks = new();
     
     // Comment line 5 and uncomment this block if you want to test the "export" command. 
     // This will pre-populate the list of bookmarks so you don't have to ;)
-    // private readonly List<Bookmark> _bookmarks = new List<Bookmark> {
-    //     new Bookmark { Name = "Packt Publishing", Url = "https://packtpub.com/", Category = "Tech books" },
-    //     new Bookmark { Name = "Audi cars", Url = "https://audi.ca", Category = "Read later" }
-    // };
+    private readonly List<Bookmark> _bookmarks = new List<Bookmark> {
+        new Bookmark { Name = "Packt Publishing", Url = "https://packtpub.com/", Category = "Tech books" },
+        new Bookmark { Name = "Audi cars", Url = "https://audi.ca", Category = "Read later" }
+    };
 
     public void AddLink(string name, string url, string category)
     {
@@ -66,6 +66,8 @@ public class BookmarkService
 
     public List<Bookmark> GetAll()
     {
+        // you can uncomment this Thread.Sleep instruction to give you enough time to terminate the program before the export operation completes. 
+        // Thread.Sleep(2000);
         return _bookmarks.ToList();
     }
 
@@ -79,5 +81,22 @@ public class BookmarkService
         }
         
         Helper.ShowSuccessMessage([$"Successfully imported {count} bookmarks!"]);
+    }
+
+
+    public BookmarkConflictModel? Import(Bookmark bookmark)
+    {
+        var conflict = _bookmarks.FirstOrDefault(b => b.Url == bookmark.Url && b.Name != bookmark.Name);
+        if(conflict is not null)
+        {
+            var conflictModel = new BookmarkConflictModel { OldName = conflict.Name, NewName = bookmark.Name, Url = bookmark.Url };
+            conflict.Name = bookmark.Name; // this updates the name of the bookmark.                               
+            return conflictModel;
+        }
+        else
+        {
+            _bookmarks.Add(bookmark);
+            return null;
+        }        
     }
 }

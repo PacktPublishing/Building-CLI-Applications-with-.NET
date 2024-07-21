@@ -3,6 +3,10 @@ using System.CommandLine.Builder;
 using System.CommandLine.Completions;
 using System.CommandLine.Parsing;
 using System.Text.Json;
+using System.CommandLine.Hosting;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+using Microsoft.Extensions.Configuration;
 
 
 namespace bookmarkr;
@@ -33,6 +37,8 @@ class Program
    
     static async Task<int> Main(string[] args)
     {
+        FreeSerilogLoggerOnShutdown();
+
 
         /***** THE ROOT COMMAND *******************/
         var rootCommand = new RootCommand("Bookmarkr is a bookmark manager provided as a CLI application.")
@@ -67,20 +73,6 @@ class Program
         urlOption.Arity = ArgumentArity.OneOrMore;
         urlOption.AllowMultipleArgumentsPerToken = true;
 
-        // this is valid only if your option accepts a single value (e.g., string), not a list (e.g., string[]).
-        // however, the uncommented version works in both cases, so I'm leaving this version commented out for reference only ;)
-        // urlOption.AddValidator(result =>
-        // {
-        //     if (result.Tokens.Count == 0)
-        //     {
-        //         result.ErrorMessage = "The URL is required";
-        //     }
-        //     else if (!Uri.TryCreate(result.Tokens[0].Value, UriKind.Absolute, out _))
-        //     {
-        //         result.ErrorMessage = "The URL is invalid";
-        //     }
-        // });
-
         urlOption.AddValidator(result =>
         {
             foreach (var token in result.Tokens)
@@ -110,19 +102,6 @@ class Program
         categoryOption.SetDefaultValue("Read later");
         categoryOption.FromAmong("Read later", "Tech books", "Cooking", "Social media");
         categoryOption.AddCompletions("Read later", "Tech books", "Cooking", "Social media");
-        
-        // Note: this is another approach to defining completions. It is useful for dynamic values (example, a range of dates for the next two weeks, starting today)
-        // categoryOption.AddCompletions((ctx) =>
-        // {
-        //     var list = new List<CompletionItem>
-        //     {
-        //         new CompletionItem("Read later"),
-        //         new CompletionItem("Tech books"),
-        //         new CompletionItem("Cooking"),
-        //         new CompletionItem("Social media")
-        //     };
-        //     return list;
-        // });
         
 
         var addLinkCommand = new Command("add", "Add a new bookmark link")
@@ -155,7 +134,12 @@ class Program
 
         rootCommand.AddCommand(exportCommand);
 
-        exportCommand.SetHandler(OnExportCommand, outputfileOption);
+        exportCommand.SetHandler(async (context) =>
+        {
+            FileInfo? outputfileOptionValue = context.ParseResult.GetValueForOption(outputfileOption);
+            var token = context.GetCancellationToken();
+            await OnExportCommand(outputfileOptionValue!, token);
+        });
 
 
         /****** the import command *****/
@@ -182,6 +166,31 @@ class Program
         
         /***** THE BUILDER PATTERN *******************/
         var parser = new CommandLineBuilder(rootCommand)
+            .UseHost(_ => Host.CreateDefaultBuilder(), 
+            host => 
+            {
+                host.ConfigureServices(services =>
+                {
+                    // ** configuration in code
+                    // services.AddSerilog((config) =>
+                    // {
+                    //     config.MinimumLevel.Information();
+                    //     config.WriteTo.Console();
+                    //     config.WriteTo.File("logs/bookmarkr-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error);
+                    //     config.CreateLogger();
+                    // });
+
+                    // ** configuration moved to appsettings.json
+                    services.AddSerilog((config) =>
+                    {
+                        var configuration = new ConfigurationBuilder()
+                                .SetBasePath(Directory.GetCurrentDirectory())
+                                .AddJsonFile("appsettings.json")
+                                .Build();
+                        config.ReadFrom.Configuration(configuration);
+                    });
+                });
+            })
             .UseDefaults()
             .Build();
 
@@ -194,26 +203,84 @@ class Program
             Console.WriteLine("Hello from the root command!");
         }
 
-        //static void OnHandleAddLinkCommand(string[] name, string[] url, string category)
         static void OnHandleAddLinkCommand(string[] names, string[] urls, string[] categories)
         {
-            //service.AddLink(name, url, category.ToString());
+            //service.AddLink(name, url, category);
             service.AddLinks(names, urls, categories);
             service.ListAll();
         }
 
-        static void OnExportCommand(FileInfo outputfile)
+        static async Task OnExportCommand(FileInfo outputfile, CancellationToken token)
         {
-            var bookmarks = service.GetAll();
-            string json = JsonSerializer.Serialize(bookmarks, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(outputfile.FullName, json);
+            try
+            {
+                Console.WriteLine("Starting export operation...");
+                var bookmarks = service.GetAll();
+                string json = JsonSerializer.Serialize(bookmarks, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(outputfile.FullName, json, token);   
+            }
+            catch(OperationCanceledException ex)
+            {
+                var requested = ex.CancellationToken.IsCancellationRequested ? "Cancellation was requested by you." : "Cancellation was NOT requested by you.";
+                Helper.ShowWarningMessage(["Operation was cancelled.", requested, $"Cancellation reason: {ex.Message}"]);
+            }
+            catch(JsonException ex)
+            {
+                Helper.ShowErrorMessage([$"Failed to serialize bookmarks to JSON.", 
+                                         $"Error message {ex.Message}"]);   
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Helper.ShowErrorMessage([$"Insufficient permissions to access the file {outputfile.FullName}", 
+                                         $"Error message {ex.Message}"]);
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                Helper.ShowErrorMessage([$"The file {outputfile.FullName} cannot be found due to an invalid path", 
+                                         $"Error message {ex.Message}"]);
+            }
+            catch (PathTooLongException ex)
+            {
+                Helper.ShowErrorMessage([$"The provided path is exceeding the maximum length.", 
+                                         $"Error message {ex.Message}"]);
+            }
+            catch(Exception ex)
+            {
+                Helper.ShowErrorMessage([$"An unknown exception occurred.", 
+                                         $"Error message {ex.Message}"]);
+            }            
         }
 
         static void OnImportCommand(FileInfo inputfile)
         {
             string json = File.ReadAllText(inputfile.FullName);
             List<Bookmark> bookmarks = JsonSerializer.Deserialize<List<Bookmark>>(json) ?? new List<Bookmark>();
-            service.Import(bookmarks);
+            
+            foreach(var bookmark in bookmarks)
+            {
+                var conflict = service.Import(bookmark);
+                if (conflict is not null)
+                {
+                    Log.Information($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | Bookmark updated | name changed from '{conflict.OldName}' to '{conflict.NewName}' for URL '{conflict.Url}'");
+                }
+            }
         }
-    }    
+    }  
+
+    static void FreeSerilogLoggerOnShutdown()
+    {
+        // This event is raised when the process is about to exit, allowing you to perform cleanup tasks or save data.
+        AppDomain.CurrentDomain.ProcessExit += (s, e) => ExecuteShutdownTasks();
+        // This event is triggered when the user presses Ctrl+C or Ctrl+Break. While it doesn't cover all shutdown scenarios, it's useful for handling user-initiated terminations.
+        Console.CancelKeyPress += (s, e) => ExecuteShutdownTasks();
+    }
+
+
+    // Code to execute before shutdown
+    static void ExecuteShutdownTasks()
+    {
+        Console.WriteLine("Performing shutdown tasks...");
+        // Perform cleanup tasks, save data, etc.
+        Log.CloseAndFlush();
+    }  
 }
