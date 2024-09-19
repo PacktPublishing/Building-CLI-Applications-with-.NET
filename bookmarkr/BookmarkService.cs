@@ -7,9 +7,20 @@ public class BookmarkService
     // Comment line 5 and uncomment this block if you want to test the "export" command. 
     // This will pre-populate the list of bookmarks so you don't have to ;)
     private readonly List<Bookmark> _bookmarks = new List<Bookmark> {
-        new Bookmark { Name = "Packt Publishing", Url = "https://packtpub.com/", Category = "Tech books" },
-        new Bookmark { Name = "Audi cars", Url = "https://audi.ca", Category = "Read later" }
-    };
+        new Bookmark { Name = "Packt Publishing", Url = "https://packtpub.com/", Category = "Tech Books" },
+        new Bookmark { Name = "Audi cars", Url = "https://audi.ca", Category = "Cars" },
+        new Bookmark { Name = "O'Reilly Media", Url = "https://www.oreilly.com/", Category = "Tech Books" },
+        new Bookmark { Name = "Tesla", Url = "https://www.tesla.com/", Category = "Cars" },
+        new Bookmark { Name = "Allrecipes", Url = "https://www.allrecipes.com/", Category = "Cooking" },
+        new Bookmark { Name = "Twitter", Url = "https://twitter.com/", Category = "Social Media" },
+        new Bookmark { Name = "Manning Publications", Url = "https://www.manning.com/", Category = "Tech Books" },
+        new Bookmark { Name = "BMW", Url = "https://www.bmw.com/", Category = "Cars" },
+        new Bookmark { Name = "Food Network", Url = "https://www.foodnetwork.com/", Category = "Cooking" },
+        new Bookmark { Name = "Facebook", Url = "https://www.facebook.com/", Category = "Social Media" },
+        new Bookmark { Name = "APress", Url = "https://apress.com/", Category = "Tech Books" },
+        new Bookmark { Name = "LinkedIn", Url = "https://www.linkedin.com/", Category = "Social Media" },
+        new Bookmark { Name = "Mercedes-Benz", Url = "https://www.mercedes-benz.com/", Category = "Cars" }
+};
 
     public void AddLink(string name, string url, string category)
     {
@@ -98,5 +109,11 @@ public class BookmarkService
             _bookmarks.Add(bookmark);
             return null;
         }        
+    }
+
+
+    public List<Bookmark> GetBookmarksByCategory(string category)
+    {
+        return _bookmarks.Where(b => b.Category.ToLower().Equals(category.ToLower())).ToList();    
     }
 }

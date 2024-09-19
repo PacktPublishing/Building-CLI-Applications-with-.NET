@@ -7,6 +7,7 @@ using System.CommandLine.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Microsoft.Extensions.Configuration;
+using Spectre.Console;
 
 
 namespace bookmarkr;
@@ -27,6 +28,7 @@ namespace bookmarkr;
    * dotnet run link add --name 'Packt Publishing' 'Audi cars' --url 'https://packtpub.com/' 'https://audi.ca' --category 'Tech books' 'Read later' => an equivalent syntax.
  * dotnet run export --file 'bookmarks.json' => exports all the bookmarks held by the application into the specified output JSON file.
  * dotnet run import --file 'bookmarks.json' => imports all the bookmarks found in the input JSON file into the application.
+ * dotnet run -- interactive => runs the interactive version of the application.
 */
 
 
@@ -139,6 +141,7 @@ class Program
             FileInfo? outputfileOptionValue = context.ParseResult.GetValueForOption(outputfileOption);
             var token = context.GetCancellationToken();
             await OnExportCommand(outputfileOptionValue!, token);
+            //await OnInteractiveExportCommand(outputfileOptionValue!, token);
         });
 
 
@@ -163,6 +166,16 @@ class Program
 
         importCommand.SetHandler(OnImportCommand, inputfileOption);
 
+
+
+        /***** THE LINK COMMAND *******************/
+        var interactiveCommand = new Command("interactive", "Manage bookmarks interactively")
+        {
+        };
+
+        rootCommand.AddCommand(interactiveCommand);
+
+        interactiveCommand.SetHandler(OnInteractiveCommand);
         
         /***** THE BUILDER PATTERN *******************/
         var parser = new CommandLineBuilder(rootCommand)
@@ -209,6 +222,56 @@ class Program
             service.AddLinks(names, urls, categories);
             service.ListAll();
         }
+/*
+        // async with live progress version
+        static async Task OnInteractiveExportCommand(FileInfo outputfile, CancellationToken token)
+        {
+            await AnsiConsole.Progress()
+                .AutoRefresh(true) // Turns on auto refresh
+                .AutoClear(false)   // Avoids removing the task list when completed
+                .HideCompleted(false)   // Avoids hiding tasks as they are completed
+                .Columns(
+                [
+                    new TaskDescriptionColumn(),    // Shows the task description
+                    new ProgressBarColumn(),        // Shows the progress bar
+                    new PercentageColumn(),         // Shows the current percentage
+                    new RemainingTimeColumn(),      // Shows the remaining time
+                    new SpinnerColumn(),            // Shows the spinner, indicating that the operation is ongoing
+                ])
+                .StartAsync(async ctx =>
+                {
+                    // Get the list of all bookmarks
+                    var bookmarks = service.GetAll();
+
+                    // export the bookmarks to the file
+                    // 1. Create the task
+                    var task = ctx.AddTask("[yellow]exporting all bookmarks to file...[/]");
+
+                    // 2. Set the total steps for the progress bar
+                    task.MaxValue = bookmarks.Count;
+                    
+                    // 3. Open the file for writing
+                    using (StreamWriter writer = new StreamWriter(outputfile.FullName))
+                    {
+                        while (!ctx.IsFinished)
+                        {
+                            foreach (var bookmark in bookmarks)
+                            {
+                                // 3.1. Serialize the current bookmark as JSON and write it to the file asynchronously
+                                await writer.WriteLineAsync(JsonSerializer.Serialize(bookmark));
+
+                                // 3.2. Increment the progress bar
+                                task.Increment(1);
+
+                                // 3.3. Slow down the process so we can see the progress (since this operation is not that much time-consuming)
+                                await Task.Delay(1500);
+                            }
+                        }
+                    }
+                });
+            AnsiConsole.MarkupLine("[green]All bookmarks have been successfully exported![/]");            
+        }
+*/
 
         static async Task OnExportCommand(FileInfo outputfile, CancellationToken token)
         {
@@ -265,7 +328,137 @@ class Program
                 }
             }
         }
+
+        static void OnInteractiveCommand()
+        {
+            bool isRunning = true;
+            while(isRunning)
+            {
+                AnsiConsole.Write(new FigletText("Bookmarkr").Centered().Color(Color.SteelBlue));
+
+                var selectedOperation = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("[blue]What do you wanna do?[/]")
+                        .AddChoices([
+                            "Export bookmarks to file",
+                            "View Bookmarks",
+                            "Exit Program"
+                        ])
+                );
+
+                switch(selectedOperation)
+                {
+                    case "Export bookmarks to file": 
+                        ExportBookmarks();
+                        break;
+                    case "View Bookmarks":
+                        ViewBookmarks(); 
+                        break;
+                    default: 
+                        isRunning = false;
+                        break;
+                }
+            }            
+        }
     }  
+
+
+    static void ExportBookmarks()
+    {  
+        // ask for the outputfilePath
+        var outputfilePath = AnsiConsole.Prompt(
+                new TextPrompt<string>("Please provide the output file name (default: 'bookmarks.json')")
+                .DefaultValue("bookmarks.json"));
+
+        // export the bookmarks to the specified file, while showing progress.
+        AnsiConsole.Progress()
+            .AutoRefresh(true) // Turns on auto refresh
+            .AutoClear(false)   // Avoids removing the task list when completed
+            .HideCompleted(false)   // Avoids hiding tasks as they are completed
+            .Columns(
+            [
+                new TaskDescriptionColumn(),    // Shows the task description
+                new ProgressBarColumn(),        // Shows the progress bar
+                new PercentageColumn(),         // Shows the current percentage
+                new RemainingTimeColumn(),      // Shows the remaining time
+                new SpinnerColumn(),            // Shows the spinner, indicating that the operation is ongoing
+            ])
+            .Start(ctx =>
+            {
+                // Get the list of all bookmarks
+                var bookmarks = service.GetAll();
+
+                // export the bookmarks to the file
+                // 1. Create the task
+                var task = ctx.AddTask("[yellow]exporting all bookmarks to file...[/]");
+
+                // 2. Set the total steps for the progress bar
+                task.MaxValue = bookmarks.Count;
+                
+                // 3. Open the file for writing
+                using (StreamWriter writer = new StreamWriter(outputfilePath))
+                {
+                    while (!ctx.IsFinished)
+                    {
+                        foreach (var bookmark in bookmarks)
+                        {
+                            // 3.1. Serialize the current bookmark as JSON and write it to the file asynchronously
+                            writer.WriteLine(JsonSerializer.Serialize(bookmark));
+
+                            // 3.2. Increment the progress bar
+                            task.Increment(1);
+
+                            // 3.3. Slow down the process so we can see the progress (since this operation is not that much time-consuming)
+                            Thread.Sleep(1500);
+                        }
+                    }
+                }
+            });
+        AnsiConsole.MarkupLine("[green]All bookmarks have been successfully exported![/]");        
+    }
+
+    static void ViewBookmarks()
+    {
+        // Create the tree
+        var root = new Tree("Bookmarks");
+
+        // Add some nodes
+        var techBooksCategory = root.AddNode("[yellow]Tech Books[/]");
+        var carsCategory = root.AddNode("[yellow]Cars[/]");
+        var socialMediaCategory = root.AddNode("[yellow]Social Media[/]");
+        var cookingCategory = root.AddNode("[yellow]Cooking[/]");
+
+        // add bookmarks for the Tech Book category
+        var techBooks = service.GetBookmarksByCategory("Tech Books");
+        foreach(var techbook in techBooks)
+        {
+            techBooksCategory.AddNode($"{techbook.Name} | {techbook.Url}");
+        }
+
+        // add bookmarks for the Cars category
+        var cars = service.GetBookmarksByCategory("Cars");
+        foreach(var car in cars)
+        {
+            carsCategory.AddNode($"{car.Name} | {car.Url}");
+        }
+
+        // add bookmarks for the Social Media category
+        var socialMedias = service.GetBookmarksByCategory("Social Media");
+        foreach(var socialMedia in socialMedias)
+        {
+            socialMediaCategory.AddNode($"{socialMedia.Name} | {socialMedia.Url}");
+        }
+
+        // add bookmarks for the Cooking category
+        var cookings = service.GetBookmarksByCategory("Cooking");
+        foreach(var cooking in cookings)
+        {
+            cookingCategory.AddNode($"{cooking.Name} | {cooking.Url}");
+        }
+
+        // Render the tree
+        AnsiConsole.Write(root);        
+    }
 
     static void FreeSerilogLoggerOnShutdown()
     {
