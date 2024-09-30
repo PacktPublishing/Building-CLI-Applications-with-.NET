@@ -1,0 +1,67 @@
+[
+  {
+    "Name": "Packt Publishing",
+    "Url": "https://packtpub.com/",
+    "Category": "Tech Books"
+  },
+  {
+    "Name": "Audi cars",
+    "Url": "https://audi.ca",
+    "Category": "Cars"
+  },
+  {
+    "Name": "O\u0027Reilly Media",
+    "Url": "https://www.oreilly.com/",
+    "Category": "Tech Books"
+  },
+  {
+    "Name": "Tesla",
+    "Url": "https://www.tesla.com/",
+    "Category": "Cars"
+  },
+  {
+    "Name": "Allrecipes",
+    "Url": "https://www.allrecipes.com/",
+    "Category": "Cooking"
+  },
+  {
+    "Name": "Twitter",
+    "Url": "https://twitter.com/",
+    "Category": "Social Media"
+  },
+  {
+    "Name": "Manning Publications",
+    "Url": "https://www.manning.com/",
+    "Category": "Tech Books"
+  },
+  {
+    "Name": "BMW",
+    "Url": "https://www.bmw.com/",
+    "Category": "Cars"
+  },
+  {
+    "Name": "Food Network",
+    "Url": "https://www.foodnetwork.com/",
+    "Category": "Cooking"
+  },
+  {
+    "Name": "Facebook",
+    "Url": "https://www.facebook.com/",
+    "Category": "Social Media"
+  },
+  {
+    "Name": "APress",
+    "Url": "https://apress.com/",
+    "Category": "Tech Books"
+  },
+  {
+    "Name": "LinkedIn",
+    "Url": "https://www.linkedin.com/",
+    "Category": "Social Media"
+  },
+  {
+    "Name": "Mercedes-Benz",
+    "Url": "https://www.mercedes-benz.com/",
+    "Category": "Cars"
+  }
+]

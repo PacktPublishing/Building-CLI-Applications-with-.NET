@@ -1,6 +1,6 @@
-namespace bookmarkr;
+namespace bookmarkr.Services;
 
-public class BookmarkService
+public class BookmarkService : IBookmarkService
 {
     //private readonly List<Bookmark> _bookmarks = new();
     
