@@ -63,6 +63,9 @@ class Program
 
         /***** REGISTER SUBCOMMANDS OF THE ROOT COMMAND *******************/
         rootCommand.AddCommand(new ExportCommand(_service, "export", "Exports all bookmarks to a file"));
+        rootCommand.AddCommand(new ImportCommand(_service, "import", "Imports all bookmarks from a file"));
+        rootCommand.AddCommand(new InteractiveCommand(_service, "interactive", "Manage bookmarks interactively"));
+        rootCommand.AddCommand(new LinkCommand(_service, "link", "Manage bookmarks links"));
         
        
         /***** THE BUILDER PATTERN *******************/
