@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using bookmarkr.Commands;
 using bookmarkr.Services;
 using Microsoft.Extensions.DependencyInjection;
+using bookmarkr.ServiceAgents;
 
 
 namespace bookmarkr;
@@ -29,6 +30,7 @@ namespace bookmarkr;
  * dotnet run export --file 'bookmarks.json' => exports all the bookmarks held by the application into the specified output JSON file.
  * dotnet run import --file 'bookmarks.json' => imports all the bookmarks found in the input JSON file into the application.
  * dotnet run -- interactive => runs the interactive version of the application.
+ * dotnet run sync => calls the web service to sync the local bookmarks with the ones stored in the remote location. 
 */
 
 
@@ -38,8 +40,10 @@ class Program
     {
         FreeSerilogLoggerOnShutdown();
 
-        /***** DECLARE A VARIABLE FOR THE IBookmarkService *******************/
+        /***** DECLARING VARIABLES *******************/
         IBookmarkService _service;
+        IHttpClientFactory _clientFactory;
+        IBookmarkrSyncrServiceAgent _serviceAgent;
 
         /***** INSTANTIATE THE ROOT COMMAND *******************/
         var rootCommand = new RootCommand("Bookmarkr is a bookmark manager provided as a CLI application.")
@@ -49,16 +53,26 @@ class Program
         rootCommand.SetHandler(OnHandleRootCommand);
 
 
-        /***** CONFIGURE DEPENDENCY INJECTION FOR THE IBookmarkService *******************/
+        /***** CONFIGURE DEPENDENCY INJECTIONS *******************/
         var host = Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
             {
                 // Register your services here
                 services.AddSingleton<IBookmarkService, BookmarkService>();
+                services.AddScoped<IBookmarkrSyncrServiceAgent, BookmarkrSyncrServiceAgent>();
+
+                services.AddHttpClient("bookmarkrSyncr", client =>
+                {
+                    client.BaseAddress = new Uri("https://bookmarkrsyncr-api.azurewebsites.net");
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+                    client.DefaultRequestHeaders.Add("User-Agent", "Bookmarkr");
+                });
             })
             .Build();
 
         _service = host.Services.GetRequiredService<IBookmarkService>();
+        _serviceAgent = host.Services.GetRequiredService<IBookmarkrSyncrServiceAgent>();
+        _clientFactory = host.Services.GetRequiredService<IHttpClientFactory>();
         
 
         /***** REGISTER SUBCOMMANDS OF THE ROOT COMMAND *******************/
@@ -66,6 +80,7 @@ class Program
         rootCommand.AddCommand(new ImportCommand(_service, "import", "Imports all bookmarks from a file"));
         rootCommand.AddCommand(new InteractiveCommand(_service, "interactive", "Manage bookmarks interactively"));
         rootCommand.AddCommand(new LinkCommand(_service, "link", "Manage bookmarks links"));
+        rootCommand.AddCommand(new SyncCommand(_serviceAgent, _service, "sync", "sync local and remote bookmark stores"));
         
        
         /***** THE BUILDER PATTERN *******************/

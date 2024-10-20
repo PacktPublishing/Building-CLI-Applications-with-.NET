@@ -15,4 +15,6 @@ public interface IBookmarkService
     BookmarkConflictModel? Import(Bookmark bookmark);
 
     List<Bookmark> GetBookmarksByCategory(string category);
+
+    void ClearAll();
 }
