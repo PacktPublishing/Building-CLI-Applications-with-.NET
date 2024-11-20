@@ -94,7 +94,8 @@ class Program
                     services.AddSerilog((config) =>
                     {
                         var configuration = new ConfigurationBuilder()
-                                .SetBasePath(Directory.GetCurrentDirectory())
+                                .SetBasePath(AppContext.BaseDirectory)
+                                //.SetBasePath(Directory.GetCurrentDirectory())
                                 .AddJsonFile("appsettings.json")
                                 .Build();
                         config.ReadFrom.Configuration(configuration);
