@@ -3,6 +3,7 @@ using System.CommandLine;
 using System.Text.Json;
 using bookmarkr.Services;
 using Serilog;
+using System.IO.Abstractions;
 
 
 namespace bookmarkr.Commands;
@@ -13,6 +14,7 @@ public class ImportCommand : Command
     #region Properties
 
     private readonly IBookmarkService _service;
+    private readonly IFileSystem _fileSystem;
 
     #endregion
 
@@ -22,6 +24,17 @@ public class ImportCommand : Command
         : base(name, description)
     {
         _service = service;
+        _fileSystem = new FileSystem();
+
+        AddOption(inputfileOption);  
+        this.SetHandler(OnImportCommand, inputfileOption);    
+    }
+
+    internal ImportCommand(IBookmarkService service, IFileSystem fileSystem, string name, string? description = null)
+        : base(name, description)
+    {
+        _service = service;
+        _fileSystem = fileSystem;
 
         AddOption(inputfileOption);  
         this.SetHandler(OnImportCommand, inputfileOption);    
@@ -46,9 +59,9 @@ public class ImportCommand : Command
 
     #region Handler method
 
-    private void OnImportCommand(FileInfo inputfile)
+    public void OnImportCommand(FileInfo inputfile)
     {
-        string json = File.ReadAllText(inputfile.FullName);
+        string json = _fileSystem.File.ReadAllText(inputfile.FullName);
         List<Bookmark> bookmarks = JsonSerializer.Deserialize<List<Bookmark>>(json) ?? new List<Bookmark>();
         
         foreach(var bookmark in bookmarks)
@@ -59,6 +72,11 @@ public class ImportCommand : Command
                 Log.Information($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} | Bookmark updated | name changed from '{conflict.OldName}' to '{conflict.NewName}' for URL '{conflict.Url}'");
             }
         }
+    }
+
+    internal void OnImportCommand(IFileInfo inputfile)
+    {
+        OnImportCommand(new FileInfo(inputfile.FullName));
     }
 
     #endregion

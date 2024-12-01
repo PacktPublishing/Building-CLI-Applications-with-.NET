@@ -9,6 +9,7 @@ using bookmarkr.Commands;
 using bookmarkr.Services;
 using Microsoft.Extensions.DependencyInjection;
 using bookmarkr.ServiceAgents;
+using System.Diagnostics.CodeAnalysis;
 
 
 namespace bookmarkr;
@@ -34,6 +35,7 @@ namespace bookmarkr;
 */
 
 
+[ExcludeFromCodeCoverage(Justification="CLI application configuration. No processing is performed in this class.")]
 class Program
 {    
     static async Task<int> Main(string[] args)

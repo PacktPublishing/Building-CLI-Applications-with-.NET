@@ -1,4 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace bookmarkr;
+
+[ExcludeFromCodeCoverage(Justification ="model class. No processing is performed by this class.")]
 
 public class Bookmark
 {
