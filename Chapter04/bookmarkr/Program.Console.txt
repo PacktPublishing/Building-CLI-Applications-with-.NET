@@ -1,0 +1,58 @@
+namespace bookmarkr;
+
+
+/*
+ * The different possible executions:
+ * dotnet run => "You haven't passed any argument..."
+ * dotnet run hello => "Unknown Command"
+ * dotnet run link hello => "Unsufficient number of parameters..."
+ * dotnet run link add Packt https://www.packtpub.com => "Bookmark successfully added!"
+  * dotnet run link add Packt https://www.packtpub.com => "Bookmark successfully added!"
+    * Yeah, I know you were expecting to be told that the bookmark already exists. The reason why it doesn't happen is that, for now, there is no backing store for the list of bookmarks.
+    * Hence, with every execution, the list is reinitialized to an empty one.
+*/
+
+
+class Program
+{    
+    static void Main(string[] args)
+    {
+        if(args == null || args.Length == 0)
+        {
+            Helper.ShowErrorMessage(["You haven't passed any argument. The expected syntax is:", "bookmarkr <command-name> <parameters>"]);
+            return;
+        }
+
+        var service = new BookmarkService();
+
+        switch(args[0].ToLower())
+        {
+            case "link":
+                ManageLinks(args, service); 
+                break;
+            // we may add more commands here...
+            default:
+                Helper.ShowErrorMessage(["Unknown Command"]);
+                break;
+        }
+    }    
+
+    static void ManageLinks(string[] args, BookmarkService svc)
+    {
+        if(args.Length < 2)
+        {
+            Helper.ShowErrorMessage(["Unsufficient number of parameters. The expected syntax is:", "bookmarkr link <subcommand> <parameters>"]);
+        }
+
+        switch(args[1].ToLower())
+        {
+            case "add":
+                svc.AddLink(args[2], args[3]);                
+                break;
+            // we may add more subcommands here...
+            default:
+                Helper.ShowErrorMessage(["Unsufficient number of parameters. The expected syntax is:", "bookmarkr link <subcommand> <parameters>"]);
+                break;
+        }
+    }
+}

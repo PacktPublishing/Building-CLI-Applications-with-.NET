@@ -1,0 +1,83 @@
+using System.CommandLine;
+using System.Text.Json;
+using System.Text;
+using bookmarkr.Services;
+using Serilog;
+using System.Net;
+
+
+namespace bookmarkr.Commands;
+
+public class SyncCommand : Command
+{
+
+    #region Properties
+
+    private readonly IBookmarkService _service;
+    private readonly IHttpClientFactory _clientFactory;
+
+    #endregion
+
+    #region Constructor
+
+    public SyncCommand(IHttpClientFactory clientFactory, IBookmarkService service, string name, string? description = null)
+        : base(name, description)
+    {
+        _service = service;
+        _clientFactory = clientFactory;
+        this.SetHandler(OnSyncCommand);    
+    }
+
+    #endregion
+
+
+    #region Options
+    #endregion
+
+
+    #region Handler method
+
+    private async Task OnSyncCommand()
+    {
+        var retrievedBookmarks = _service.GetAll();
+        var serializedRetrievedBookmarks = JsonSerializer.Serialize(retrievedBookmarks);
+        var content = new StringContent(serializedRetrievedBookmarks, Encoding.UTF8, "application/json");
+
+        var client = _clientFactory.CreateClient("bookmarkrSyncr");
+        var response = await client.PostAsync("sync", content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            
+            var mergedBookmarks = await JsonSerializer.DeserializeAsync<List<Bookmark>>(
+                await response.Content.ReadAsStreamAsync(),
+                options
+            );
+
+            _service.ClearAll();
+            _service.Import(mergedBookmarks!);
+
+            Log.Information("Successfully synced bookmarks");
+        }
+        else
+        {
+            switch(response.StatusCode)
+            {
+                case HttpStatusCode.NotFound:
+                    Log.Error("Resource not found"); break;
+                case HttpStatusCode.Unauthorized:
+                    Log.Error("Unauthorized access"); break;
+                default:
+                    var error = await response.Content.ReadAsStringAsync();
+                    Log.Error($"Failed to sync bookmarks | {error}");
+                    break;
+            }
+        }
+    }
+
+    #endregion
+}

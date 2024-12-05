@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "name": "C#: bookmarkr",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\bookmarkr.csproj",
+            "launchConfigurationId": "TargetFramework=;bookmarkr"
+        }
+    ]
+}

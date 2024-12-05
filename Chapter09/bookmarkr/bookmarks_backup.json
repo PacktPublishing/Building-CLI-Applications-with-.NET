@@ -1,0 +1,22 @@
+[
+    {
+      "Name": "Packt Publishing",
+      "Url": "https://packtpub.com/",
+      "Category": "Tech books"
+    },
+    {
+      "Name": "Audi Canada",
+      "Url": "https://audi.ca",
+      "Category": "Read later"
+    },
+    {
+      "Name": "AllRecipes",
+      "Url": "https://www.allrecipes.com",
+      "Category": "Cooking"
+    },
+    {
+      "Name": "YouTube",
+      "Url": "https://www.youtube.com",
+      "Category": "Social media"
+    }
+  ]

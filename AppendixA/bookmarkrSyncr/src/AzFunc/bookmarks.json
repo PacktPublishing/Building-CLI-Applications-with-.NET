@@ -1,0 +1,72 @@
+[
+    {
+        "Name": "Facebook",
+        "Url": "https://www.facebook.com",
+        "Category": "Social media"
+    },
+    {
+        "Name": "Twitter",
+        "Url": "https://www.twitter.com",
+        "Category": "Social media"
+    },
+    {
+        "Name": "Instagram",
+        "Url": "https://www.instagram.com",
+        "Category": "Social media"
+    },
+    {
+        "Name": "LinkedIn",
+        "Url": "https://www.linkedin.com",
+        "Category": "Social media"
+    },
+    {
+        "Name": "The Kitchn",
+        "Url": "https://www.thekitchn.com",
+        "Category": "Cooking"
+    },
+    {
+        "Name": "Serious Eats",
+        "Url": "https://www.seriouseats.com",
+        "Category": "Cooking"
+    },
+    {
+        "Name": "BBC Good Food",
+        "Url": "https://www.bbcgoodfood.com",
+        "Category": "Cooking"
+    },
+    {
+        "Name": "AllRecipes Cuisine and tips",
+        "Url": "https://www.allrecipes.com",
+        "Category": "Cooking"
+    },
+    {
+        "Name": "Apress",
+        "Url": "https://www.apress.com",
+        "Category": "Tech books"
+    },
+    {
+        "Name": "O'Reilly Media",
+        "Url": "https://www.oreilly.com",
+        "Category": "Tech books"
+    },
+    {
+        "Name": "Packt Publishing",
+        "Url": "https://www.packtpub.com",
+        "Category": "Tech books"
+    },
+    {
+        "Name": "Car and Driver",
+        "Url": "https://www.caranddriver.com",
+        "Category": "Read later"
+    },
+    {
+        "Name": "MotorTrend",
+        "Url": "https://www.motortrend.com",
+        "Category": "Read later"
+    },
+    {
+        "Name": "Code Magazine",
+        "Url": "https://www.codemag.com",
+        "Category": "Read later"
+    }
+]
