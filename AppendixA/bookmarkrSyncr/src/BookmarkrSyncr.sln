@@ -1,34 +1,33 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.5.002.0
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzFuncSync", "AzFunc\AzFuncSync.csproj", "{180A829B-BA35-447A-B1DC-E307125B801D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzFuncSync", "AzFunc\AzFuncSync.csproj", "{C3053445-2CB4-4922-BBDE-38B4DC25CB2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookmarkrSyncrApi", "AzWebApp\BookmarkrSyncrApi\BookmarkrSyncrApi.csproj", "{A7A3182D-4A9E-4E1D-956B-28253C32CA8F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzWebApp", "AzWebApp", "{53C665F6-C0BE-48BD-95D7-CAACA5BF9BAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookmarkrSyncrApi", "AzWebApp\BookmarkrSyncrApi\BookmarkrSyncrApi.csproj", "{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{180A829B-BA35-447A-B1DC-E307125B801D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{180A829B-BA35-447A-B1DC-E307125B801D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{180A829B-BA35-447A-B1DC-E307125B801D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{180A829B-BA35-447A-B1DC-E307125B801D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A7A3182D-4A9E-4E1D-956B-28253C32CA8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7A3182D-4A9E-4E1D-956B-28253C32CA8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7A3182D-4A9E-4E1D-956B-28253C32CA8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7A3182D-4A9E-4E1D-956B-28253C32CA8F}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {89457803-F1D5-40CC-87E9-99E448DE8A14}
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C3053445-2CB4-4922-BBDE-38B4DC25CB2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3053445-2CB4-4922-BBDE-38B4DC25CB2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3053445-2CB4-4922-BBDE-38B4DC25CB2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3053445-2CB4-4922-BBDE-38B4DC25CB2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A7A3182D-4A9E-4E1D-956B-28253C32CA8F} = {78DBA0F7-A3AC-4E63-B591-D4B017DB7FC4}
+		{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF} = {53C665F6-C0BE-48BD-95D7-CAACA5BF9BAB}
 	EndGlobalSection
 EndGlobal
