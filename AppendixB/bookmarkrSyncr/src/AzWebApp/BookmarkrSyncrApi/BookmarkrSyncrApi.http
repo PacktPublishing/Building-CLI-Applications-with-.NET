@@ -1,0 +1,11 @@
+@BookmarkrSyncrApi_HostAddress = https://bookmarkrsyncr-api.azurewebsites.net
+#@BookmarkrSyncrApi_HostAddress = http://localhost:5029
+
+
+POST {{BookmarkrSyncrApi_HostAddress}}/sync
+Content-Type: application/json
+User-Agent: Bookmarkr
+
+[{"Name":"Packt Publishing","Url":"https://packtpub.com/","Category":"Tech Books"},{"Name":"Audi cars","Url":"https://audi.ca","Category":"See later"},{"Name":"O\u0027Reilly Media","Url":"https://www.oreilly.com/","Category":"Tech Books"},{"Name":"Tesla","Url":"https://www.tesla.com/","Category":"See later"},{"Name":"Allrecipes","Url":"https://www.allrecipes.com/","Category":"Cooking"},{"Name":"Twitter","Url":"https://twitter.com/","Category":"Social Media"},{"Name":"Manning Publications","Url":"https://www.manning.com/","Category":"Tech Books"},{"Name":"BMW","Url":"https://www.bmw.com/","Category":"See later"},{"Name":"Food Network","Url":"https://www.foodnetwork.com/","Category":"Cooking"},{"Name":"Facebook","Url":"https://www.facebook.com/","Category":"Social Media"},{"Name":"APress","Url":"https://apress.com/","Category":"Tech Books"},{"Name":"LinkedIn","Url":"https://www.linkedin.com/","Category":"Social Media"},{"Name":"Mercedes-Benz","Url":"https://www.mercedes-benz.com/","Category":"See later"}]
+
+###

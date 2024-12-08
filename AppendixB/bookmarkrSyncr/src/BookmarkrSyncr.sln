@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzWebApp", "AzWebApp", "{53C665F6-C0BE-48BD-95D7-CAACA5BF9BAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookmarkrSyncrApi", "AzWebApp\BookmarkrSyncrApi\BookmarkrSyncrApi.csproj", "{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{42AAEEDF-5D37-4E4E-A2AB-1BD5DECCDADF} = {53C665F6-C0BE-48BD-95D7-CAACA5BF9BAB}
+	EndGlobalSection
+EndGlobal
