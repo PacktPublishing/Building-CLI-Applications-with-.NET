@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <!-- <AssemblyName>bookmarkr-cli</AssemblyName> -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>bookmarkr</PackageId>
+    <Version>1.0.3</Version>
+    <Authors>Tidjani Belmansour</Authors>
+    <Description>Bookmarkr is a bookmark manager provided as a CLI application.</Description>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>bookmarkr</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Copyright>Tidjani Belmansour. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/PacktPublishing/Building-CLI-Applications-with-.NET</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/PacktPublishing/Building-CLI-Applications-with-.NET</RepositoryUrl>
+    <PackageTags>.net;cli-app;bookmark-manager</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Benchmarkdotnet" Version="0.14.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="spectre.console" Version="0.49.1" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="System.CommandLine.Hosting" Version="0.4.0-alpha.22272.1" />
+  </ItemGroup>
+
+   <ItemGroup>
+    <None Update="appsettings.json">
+      <Pack>true</Pack>
+      <PackagePath>\</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

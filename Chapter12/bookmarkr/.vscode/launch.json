@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        /****** FOR RUNNING ********/
+        {
+            "name": "C#: bookmarkr",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\bookmarkr.csproj",
+            "launchConfigurationId": "TargetFramework=;bookmarkr"
+        }
+        /****** FOR DEBUGGING ********/
+        // {
+        //     "name": "C#: bookmarkr",
+        //     "type": "coreclr",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}/bin/Debug/net8.0/bookmarkr.dll",
+        //     "args":["benchmark"],
+        //     "cwd": "${workspaceFolder}",
+        //     "stopAtEntry": false,
+        //     "console": "internalConsole"
+        // }
+    ]
+}
